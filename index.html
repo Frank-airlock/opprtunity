@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opportunity Scout — Free & low-capital earning opportunities</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%2322c55e'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%23082011' font-family='sans-serif' font-weight='bold'%3E₦%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+      <circle cx="24" cy="24" r="22" fill="#22c55e"/>
+      <circle cx="24" cy="24" r="20" fill="none" stroke="#052e16" stroke-width="1.5" stroke-dasharray="4 5" opacity=".6"/>
+      <path d="M24 12 L29 24 L24 36 L19 24 Z" fill="#052e16"/>
+      <rect x="23" y="17" width="2" height="14" rx="1" fill="#22c55e"/>
+    </svg>
+    <div>
+      <h1>Opportunity Scout</h1>
+      <p>Free &amp; low-capital earning opportunities — web, Reddit &amp; X</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <span id="updated-label" class="muted small">—</span>
+    <button id="help-btn" class="btn btn-ghost" title="How to use">❓</button>
+    <button id="refresh-btn" class="btn" title="Re-scan all sources">↻ Refresh</button>
+    <button id="settings-btn" class="btn btn-ghost" title="Settings">⚙</button>
+  </div>
+</header>
+
+<section class="controls">
+  <form id="search-form" class="search">
+    <input id="search-input" type="search" autocomplete="off"
+      placeholder="Search for an opportunity… e.g. airdrop, transcription jobs, POS business in Nigeria">
+    <button class="btn btn-primary" type="submit">🔍 Scan</button>
+  </form>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="all" class="active">All</button>
+    <button data-tab="free">⚡ Free</button>
+    <button data-tab="low">💼 Low-capital</button>
+    <button data-tab="x">🐦 From X</button>
+    <button data-tab="nigeria">🇳🇬 Nigeria</button>
+    <button data-tab="saved">🔖 Saved <span id="saved-count" class="count"></span></button>
+  </nav>
+
+  <div class="topic-chips" id="topic-chips">
+    <span class="muted small">Filter:</span>
+    <button data-topic="crypto">🪙 Crypto</button>
+    <button data-topic="jobs">💻 Jobs &amp; gigs</button>
+    <button data-topic="business">🏪 Business</button>
+    <button data-topic="grants">🎓 Grants</button>
+    <button data-topic="microtasks">🧩 Microtasks</button>
+  </div>
+</section>
+
+<main>
+  <div id="search-banner" class="search-banner hidden">
+    <span>🔍 Results for “<b id="search-term"></b>”</span>
+    <button id="clear-search" class="btn btn-ghost">✕ Back to full scan</button>
+  </div>
+
+  <div id="stats" class="stats"></div>
+  <div id="error-banner" class="error-banner hidden"></div>
+
+  <div id="loading-note" class="loading-note hidden">📡 Scanning the web, Reddit &amp; X — the first scan takes ~30 seconds. Hang tight…</div>
+
+  <section id="cards" class="cards" aria-live="polite"></section>
+
+  <div id="empty" class="empty hidden">
+    <div class="empty-icon">🕳️</div>
+    <p>Nothing here yet. Try another tab, adjust the filters, or run a search above.</p>
+  </div>
+</main>
+
+<section class="safety">
+  <details>
+    <summary>🛡️ Stay safe — 30-second scam checklist (read before acting on any opportunity)</summary>
+    <ul>
+      <li><b>Never pay to get paid.</b> Upfront “registration”, “activation”, or “withdrawal” fees = scam.</li>
+      <li><b>“Guaranteed profits” do not exist.</b> Anyone guaranteeing returns is lying to you.</li>
+      <li><b>Never share your seed phrase or bank OTP</b> — no legit airdrop or employer asks for these.</li>
+      <li><b>Be careful with WhatsApp/Telegram DMs.</b> Verify on the official website, not in a chat.</li>
+      <li><b>Too good to be true usually is.</b> “Double your money in 3 days” = run.</li>
+      <li><b>Do your own research (DYOR).</b> Search the name + “scam” or “review” before committing time or money.</li>
+    </ul>
+  </details>
+</section>
+
+<footer>
+  <p>
+    Opportunity Scout aggregates public posts from Reddit, Bing web search, RemoteOK, and X (via web search).
+    Listings are <b>not endorsements</b> — always verify before investing time or money.
+  </p>
+  <p class="muted small">Feed auto-caches for 10 minutes per scan · Saved opportunities stay in your browser.</p>
+</footer>
+
+<div id="settings-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>⚙ Settings</h2>
+    <label for="x-token-input">X API bearer token <span class="muted">(optional)</span></label>
+    <p class="muted small">
+      By default, X posts are found through web search (free, no key needed).
+      If you have an X Developer account with a paid plan that includes search, paste your
+      bearer token here for direct, real-time X search. Stored only in your browser.
+    </p>
+    <textarea id="x-token-input" rows="3" placeholder="AAAAAAAAAAAAAA…" spellcheck="false"></textarea>
+    <div class="modal-actions">
+      <button id="save-settings" class="btn btn-primary">Save</button>
+      <button id="clear-token" class="btn btn-ghost">Remove token</button>
+      <button id="close-settings" class="btn btn-ghost">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="help-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h2>❓ How to use Opportunity Scout</h2>
+    <p class="muted small">
+      This page hunts the web, Reddit and X (Twitter) for new ways to earn money —
+      free and low-capital — and keeps everything in one place. No account needed.
+    </p>
+    <h3>The tabs</h3>
+    <ul>
+      <li><b>⚡ Free</b> — things you can start with zero money</li>
+      <li><b>💼 Low-capital</b> — ideas that need a little starting money</li>
+      <li><b>🐦 From X</b> — posts spotted on X (Twitter)</li>
+      <li><b>🇳🇬 Nigeria</b> — opportunities open to Nigerians</li>
+      <li><b>🔖 Saved</b> — items you have bookmarked</li>
+    </ul>
+    <h3>Using it</h3>
+    <ul>
+      <li>Tap any headline to open the original website in a new tab</li>
+      <li>Tap 🏷️ to save an opportunity for later</li>
+      <li>Search for anything specific — e.g. “POS business”, “transcription jobs”</li>
+      <li>⚠ red flag badge = possible scam signs — proceed carefully</li>
+    </ul>
+    <p class="muted small">
+      ⚠️ We only collect public posts — we cannot guarantee they are genuine.
+      Never pay money to get paid, and never share your bank OTP or crypto wallet
+      seed phrase. See the full safety checklist below the results.
+    </p>
+    <div class="modal-actions">
+      <button id="close-help" class="btn btn-primary">Got it! 👍</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
